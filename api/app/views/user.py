@@ -2,7 +2,9 @@ from app import app
 from flask import request
 from flask_json import json_response
 from app.models.base import database
+from app.models.user import User
 from peewee import *
+import json
 
 @app.route("/users", methods=["GET", "POST"])
 def users():
@@ -28,9 +30,11 @@ def users():
 		return json.dumps(user.to_hash())
 
 	elif request.method == "GET":
-		# returns list of all users
-		list_users = User.select()
-		return json.dumps(list_users.to_hash())
+		list = []
+		for record in User.select():
+			hash = record.to_hash()
+			list.append(hash)
+		return jsonify(list)
 
 @app.route("/users/<user_id>", methods=["GET", "PUT", "DELETE"])
 def users_id(user_id):

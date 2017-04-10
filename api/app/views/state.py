@@ -1,7 +1,7 @@
-from ..app import app
+from app import app
 from flask import request
 from flask_json import json_response
-from ..models.base import database
+from app.models.base import database
 from peewee import *
 
 @app.route('/states', methods=['GET', 'POST'])

@@ -11,15 +11,18 @@ class User(BaseModel):
 
 	# runs pswd parameter through md5 hash function and saves hash to self.password 
 	def set_password(self, clear_password):
-		m = hashlib.md5()
-		self.password = m.update(clear_password)
+		m = md5()
+		m.update(clear_password)
+		self.password = m.hexdigest()
 
 	# returns hash of all class attributes, inc. inherited ones
 	def to_hash(self):
-		return {	'id': self.id,
-					'created_at': self.created_at,
-					'updated_at': self.updated_at,
+		data = {	'id': self.id,
+					'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+					'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M:%S'),
 					'email': self.email,
 					'first_name': self.first_name,
 					'last_name': self.last_name,
 					'is_admin': self.is_admin 	}
+
+		return date
