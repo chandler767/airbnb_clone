@@ -6,7 +6,7 @@ if os.environ.get('AIRBNB_ENV') == 'development':
 	HOST = 'localhost'
 	PORT = 3333
 	DATABASE = {
-		'host': '54.183.156.10',
+		'host': '54.183.231.35',
 		'user': 'airbnb_user_dev',
 		'database': 'airbnb_dev',
 		'port': 3306,
@@ -20,7 +20,7 @@ if os.environ.get('AIRBNB_ENV') == 'production':
 	HOST = '0.0.0.0'
 	PORT = 3000
 	DATABASE = {
-		'host': '54.183.156.10',
+		'host': '54.183.231.35',
 		'user': 'airbnb_user_prod',
 		'database': 'airbnb_prod',
 		'port': 3306,
@@ -34,7 +34,7 @@ if os.environ.get('AIRBNB_ENV') == 'test':
 	HOST = 'localhost'
 	PORT = 5555
 	DATABASE = {
-		'host': '54.183.156.10',
+		'host': '54.183.231.35',
 		'user': 'airbnb_user_test',
 		'database': 'airbnb_test',
 		'port': 3306,

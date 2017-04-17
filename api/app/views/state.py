@@ -1,39 +1,50 @@
 from app import app
 from flask import request
 from flask_json import json_response
-from app.models.base import database
+from app.models.state import State
+from flask import jsonify
 from peewee import *
 
 @app.route('/states', methods=['GET', 'POST'])
 def states():
 	if request.method == 'GET':
-		list_states = State.select()
-		return json.dumps(list_states.to_hash())
+		states = []
+
+		for state in State.select():
+			data = state.to_hash()
+			states.append(data)
+		return jsonify(states), 200
 
 	elif request.method == 'POST':
-		# get data from post request
-		data = request.data
-		name = data['name']
-		
-		# if name already exists in database, return error message
-		name_check = State.get(State.name == name)
-		if name_check:
-			return json_response(code=10001, msg="State already exists")
+		try:
+			if "name" not in request.form:
+				return json_response(status_=400, msg="Must include a name")
 
-		# if name_check is empty, create new state with post request info
-		entry = State.insert(name=name)
-		entry.execute()
+			insert = State(name=str(request.form["name"]))
+			insert.save()
+			return jsonify(insert.to_hash()), 201
 
-		# return json of data added to State table
-		state = State.select().where(name=name).get()
-		return json.dumps(state.to_hash())
+		except IntegrityError:
+			return json_response(status_=409,
+								code=10001,
+								msg="State already exists")
 
 @app.route('/states/<state_id>', methods=['GET', 'DELETE'])
 def states_id(state_id):
-	state = State.select().where(id=state_id).get()
-
 	if request.method == 'GET':
-		return json.dumps(state.to_hash())
+		try:
+			state = State.get(State.id == state_id)
+			return jsonify(state.to_hash()), 200
+
+		except State.DoesNotExist:
+			return json_response(status_=404, msg="not found")
 
 	elif request.method == 'DELETE':
-		state.delete_instance()
+		try:
+			state = State.get(State.id == state_id)
+			state.delete_instance()
+			state.save()
+			return json_response(status_=200, msg="State succesfully deleted")
+
+		except State.DoesNotExist:
+			return json_response(status_=404, msg="state does not exist")

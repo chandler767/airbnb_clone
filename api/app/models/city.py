@@ -8,8 +8,10 @@ class City(BaseModel):
 
 	# returns hash of all class attributes, inc. inherited ones
 	def to_hash(self):
+		state = State.get(State.id == self.state)
+
 		return {	'id': self.id,
 					'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
 					'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M:%S'),
 					'name': self.name,
-					'state_id': self.state 	}
+					'state_id': state.id 	}
