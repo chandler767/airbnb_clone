@@ -4,25 +4,22 @@ from flask_json import json_response
 from app.models.city import City
 from flask import jsonify
 from peewee import *
+from return_styles import ListStyle
 
 @app.route('/states/<state_id>/cities', methods=['GET', 'POST'])
 def cities(state_id):
 	if request.method == 'GET':
 		try:
-			cities = []
 			query = City.select().where(City.state == state_id)
 
-			for city in query:
-				cities.append(city.to_hash())
-
-			return jsonify(cities), 200
+			return ListStyle.list(query, request), 200
 
 		except City.DoesNotExist:
 			return json_response(status_=404, msg="not found")
 
 	elif request.method == 'POST':
 		if "name" not in request.form:
-			return json_response(status_=400, msg="Must include name for city")
+			return json_response(status_=400, msg="missing parameters", code=40000)
 
 		city_test = City.select().where(City.name == str(request.form["name"]), City.state == state_id)
 
@@ -31,7 +28,7 @@ def cities(state_id):
 
 		city = City(name=str(request.form["name"]), state=str(state_id))
 		city.save()
-		return jsonify(city.to_hash()), 201
+		return jsonify(city.to_dict()), 201
 
 
 @app.route('/states/<state_id>/cities/<city_id>', methods=["GET", "DELETE"])
@@ -39,7 +36,7 @@ def cities_states(state_id, city_id):
 	if request.method == "GET":
 		try:
 			query = City.get(City.id == city_id)
-			return jsonify(query.to_hash()), 200
+			return jsonify(query.to_dict()), 200
 
 		except City.DoesNotExist:
 			return json_response(status_=404, msg="not found")

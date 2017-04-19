@@ -7,22 +7,18 @@ from flask_json import request
 from peewee import *
 from flask import jsonify
 from flask_json import json_response
+from return_styles import ListStyle
 
 @app.route('/amenities', methods=['GET', 'POST'])
 def amenities():
 	if request.method == 'GET':
 		amenities = Amenity.select()
-		data = []
-
-		for a in amenities:
-			data.append(a.to_hash())
-
-		return jsonify(data), 200
+		return ListStyle.list(amenities, request), 200
 
 	elif request.method == 'POST':
 		try:
 			if "name" not in request.form:
-				return json_response(status_=400, msg="missing name field")
+				return json_response(status_=400, msg="missing parameters", code=40000)
 				
 			test = Amenity.select().where(Amenity.name == request.form["name"])
 
@@ -31,7 +27,7 @@ def amenities():
 
 			amenity = Amenity(name=request.form["name"])
 			amenity.save()
-			return jsonify(amenity.to_hash()), 201
+			return jsonify(amenity.to_dict()), 201
 
 		except IntegrityError:
 			return json_response(status_=409,
@@ -42,12 +38,12 @@ def amenities():
 def amenities_id(amenity_id):
 	if request.method == 'GET':
 		try:
-			amenity = Amenity.get(Amenity.id == amenity_id)
+			amenity = Amenity.select().where(Amenity.id == amenity_id)
 
 		except Amenity.DoesNotExist:
 			return json_response(status_=404, msg="Not found")
 
-		return jsonify(amenity.to_hash()), 200
+		return jsonify(amenity.to_dict()), 200
 
 	elif request.method == 'DELETE':
 		try:
@@ -66,7 +62,35 @@ def amenities_place(place_id):
 	if request.method == "GET":
 		try:
 			query = Amenity.select().join(PlaceAmenities).where(PlaceAmenities.place == place_id)
-			return jsonify(query.to_hash()), 200
+			return ListStyle.list(query, request), 200
 
 		except:
 			return json_response(status_=404, msg="Not found")
+
+@app.route("/places/<place_id>/amenities/<amenity_id>", methods=["POST", "DELETE"])
+def place_amenity_id(place_id, amenity_id):
+	query = Place.select().where(Place.id == place_id)
+
+	if query.wrapped_count() < 1:
+		return json_response(status_=404, msg="that place does not exist")
+
+	query = Amenity.select().where(Amenity.id == amenity_id)
+
+	if query.wrapped_count() < 1:
+		return json_response(status_=404, msg="that amenity does not exist")
+
+	query = PlaceAmenities.select().where(PlaceAmenities.amenity == amenity_id, PlaceAmenities.place == place_id)
+
+	if query.wrapped_count() > 0:
+		return json_response(status_=404, msg="amenity already set for given place")
+
+	if request.method == "POST":
+		insert = PlaceAmenities(place=place_id, amenity=amenity_id)
+		insert.save()
+		return jsonify(insert.to_dict()), 201
+
+	elif request.method == "DELETE":
+		amenity = PlaceAmenities.get(PlaceAmenities.amenity == amenity_id, PlaceAmenities.place == place_id)
+		amenity.delete_instance()
+		amenity.save()
+		return json_response(status_=200, msg="amentiy delete for given place")

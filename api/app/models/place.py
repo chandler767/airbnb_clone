@@ -16,13 +16,13 @@ class Place(BaseModel):
 	longitude = FloatField()
 
 	# returns hash of all class attributes, inc. inherited ones
-	def to_hash(self):
+	def to_dict(self):
 		owner = User.get(User.id == self.owner)
 		city = City.get(City.id == self.city)
 
 		return {	'id': self.id,
-					'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
-					'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M:%S'),
+					'created_at': self.created_at.strftime('%Y/%m/%d %H:%M:%S'),
+					'updated_at': self.updated_at.strftime('%Y/%m/%d %H:%M:%S'),
 					'owner_id': owner.id,
 					'city_id': city.id,
 					'name': self.name,

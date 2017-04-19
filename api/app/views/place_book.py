@@ -2,10 +2,11 @@ from app.models.place_book import PlaceBook
 from app.models.place import Place
 from app.models.user import User
 from app import app
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from flask import request, jsonify
 from flask_json import json_response
+from return_styles import ListStyle
 
 @app.route('/places/<place_id>/books', methods=['GET', 'POST'])
 def books(place_id):
@@ -16,14 +17,12 @@ def books(place_id):
 			return json_response(status_=404, msg="place does not exist")
 
 		query = PlaceBook.select().where(PlaceBook.place == place_id)
-		books = []
-
-		for book in query:
-			books.append(book.to_hash())
-
-		return jsonify(books), 200
+		return ListStyle.list(query, request), 200
 
 	elif request.method == 'POST':
+		if "name" not in request.form or "date_start" not in request.form:
+			return json_response(status_=400, code=40000, msg="missing parameters")
+
 		test = Place.select().where(Place.id == place_id)
 
 		if test.wrapped_count() < 1:
@@ -34,13 +33,40 @@ def books(place_id):
 		if test.wrapped_count() < 1:
 			return json_response(status_=404, msg="no user with given id")
 
+		try:
+			start = datetime.strptime(request.form['date_start'], '%Y/%m/%d %H:%M:%S')
+
+		except ValueError:
+			return json_response(status_=400, msg="incorrect date format")
+
+		end = start + timedelta(days=int(request.form['number_nights']))
+		bookings = PlaceBook.select().where(PlaceBook.place == place_id)
+
+		for booking in bookings:
+			start_b = booking.date_start
+			end_b = start_date + timedelta(days=booking.number_nights)
+
+			if start >= start_b and start < end_b:
+				return json_response(status=410, msg="Place unavailable at this date", code=110000)
+
+			elif start_b >= start and start_b < end:
+				return json_response(status=410, msg="Place unavailable at this date", code=110000)
+
+			elif end > start_b  and end <= end_b:
+				return json_response(status=410, msg="Place unavailable at this date", code=110000)
+
 		place_book = PlaceBook(place=place_id,
 								user=request.form['user'],
-								is_validated=request.form['is_validated'],
-								date_start=datetime.strptime(request.form['date_start'], '%Y/%m/%d %H:%M:%S'),
-								number_nights=request.form['number_nights'])
+								date_start=datetime.strptime(request.form['date_start'], '%Y/%m/%d %H:%M:%S'))
+
+		if "is_validated" in request.form:
+			place_book.is_validated = request.form["is_validated"]
+
+		elif "number_nights" in request.form:
+			place_book.number_nights = request.form["number_nights"]
+
 		place_book.save()
-		return jsonify(place_book.to_hash()), 201
+		return jsonify(place_book.to_dict()), 201
 
 @app.route('/places/<place_id>/books/<book_id>', methods=['GET', 'PUT', 'DELETE'])
 def edit_books(place_id, book_id):
@@ -52,7 +78,7 @@ def edit_books(place_id, book_id):
 				return json_response(status_=404, msg="place does not exist")
 
 			booking = PlaceBook.get(PlaceBook.id == book_id)
-			return jsonify(booking.to_hash()), 200
+			return jsonify(booking.to_dict()), 200
 
 		except PlaceBook.DoesNotExist:
 			return json_response(code=404, status_=404, msg="Not found")
@@ -79,7 +105,7 @@ def edit_books(place_id, book_id):
 					booking.number_nights = request.form[key]
 
 			booking.save()
-			return jsonify(booking.to_hash()), 200
+			return jsonify(booking.to_dict()), 200
 
 		except PlaceBook.DoesNotExist:
 			return json_response(code=404, status_=404, msg="Not found")

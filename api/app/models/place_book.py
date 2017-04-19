@@ -11,7 +11,7 @@ class PlaceBook(BaseModel):
 	number_nights = IntegerField(default=1)
 
 	# returns hash of all class attributes, inc. inherited ones
-	def to_hash(self):
+	def to_dict(self):
 		place = Place.get(Place.id == self.place)
 		user = User.get(User.id == self.user)
 		data =  {	'id': self.id,

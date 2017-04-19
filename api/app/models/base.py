@@ -6,8 +6,8 @@ database = peewee.MySQLDatabase(database=DATABASE["database"], host=DATABASE["ho
 
 class BaseModel(peewee.Model):
 	id = peewee.PrimaryKeyField(unique=True)
-	created_at = peewee.DateTimeField(default=datetime.datetime.now(),formats="%d/%m/%Y %H:%M:%S")
-	updated_at = peewee.DateTimeField(default=datetime.datetime.now(),formats="%d/%m/%Y %H:%M:%S")
+	created_at = peewee.DateTimeField(default=datetime.datetime.now(),formats="%Y/%m/%d %H:%M:%S")
+	updated_at = peewee.DateTimeField(default=datetime.datetime.now(),formats="%Y/%m/%d %H:%M:%S")
 
 	# updates updated_at before saving
 	def save(self, *args, **kwargs):

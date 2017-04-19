@@ -16,10 +16,10 @@ class User(BaseModel):
 		self.password = m.hexdigest()
 
 	# returns dict of all class attributes
-	def to_hash(self):
+	def to_dict(self):
 		data = {	'id': self.id,
-					'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
-					'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M:%S'),
+					'created_at': self.created_at.strftime('%Y/%m/%d %H:%M:%S'),
+					'updated_at': self.updated_at.strftime('%Y/%m/%d %H:%M:%S'),
 					'email': self.email,
 					'first_name': self.first_name,
 					'last_name': self.last_name,
