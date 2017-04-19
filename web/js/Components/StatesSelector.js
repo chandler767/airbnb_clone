@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import StateItemSelector from 'js/Components/StateItemSelector';
 
-export default class StatesSelector extends Component {
+export default class StatesSelector extends Component { // Creates a list of states.
     constructor(props) {
         super(props);
     }
@@ -16,7 +16,7 @@ export default class StatesSelector extends Component {
         }
         return (this.props.states.map((each) => {
             <li key={each.id}>
-                {each.name} // List each
+                {each.name} 
             </li>
         }));
     }
@@ -24,9 +24,9 @@ export default class StatesSelector extends Component {
     render () {  
         return (
             <div>
-                <h1>States:</h1>
+                <h1> States: </h1>
                 <ul>
-                    {this.createStateList()} // Show list
+                    {this.createStateList()} 
                 </ul>
             </div>
         );
@@ -34,6 +34,6 @@ export default class StatesSelector extends Component {
 }
 
 StatesSelector.propTypes = {
-  fetchStates: React.PropTypes.func,
-  states: React.PropTypes.array,
+    fetchStates: React.PropTypes.func,
+    states: React.PropTypes.array,
 };

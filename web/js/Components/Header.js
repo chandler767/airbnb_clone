@@ -4,11 +4,9 @@ var styles = {
   header: {
     height: '60px',
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: '5vh'
+    flexDirection: 'row'
   },
-  logo: {
+  airbnb_logo: {
     height: '60px'
   },
   div: {
@@ -19,7 +17,7 @@ var styles = {
 const Header = (props)=> (
   <header style={styles.header}>
     <img
-      style={styles.logo}
+      style={styles.airbnb_logo}
       src="http://logok.org/wp-content/uploads/2014/07/Airbnb-new-logo-2014.png" />
      <div className={styles.div}></div>
   </header>

@@ -2,9 +2,9 @@ import React from 'react';
 
 const styles = {
   footer: {
-    height: '40px',
-    borderStyle: 'solid',
-    textAlign: 'center'
+      height: '40px',
+      borderStyle: 'solid',
+      textAlign: 'center'
     }
 }
 

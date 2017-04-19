@@ -1,22 +1,21 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Map } from 'immutable';
-
-import {fetchStates} from 'js/Actions/StateActionCreators';
-
 import component from 'js/Components/StatesSelector';
+import { connect } from 'react-redux';
+import { fetchStates } from 'js/Actions/StateActionCreators';
+import { Map } from 'immutable';
+import React from 'react';
 
-export function mapDispatchToProps(dispatch) {
+
+export function mapToProp(dispatch) {
   return bindActionCreators({
     fetchStates,
   }, dispatch);
 }
 
-export function mapStateToProps(state) {
+export function StateToProp(state) {
   return {
-    states: state.StateReducer,
+    states: state.StateReducer, // see Reducers/states.js
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(component);
+export default connect(StateToProp, mapToProp)(component);

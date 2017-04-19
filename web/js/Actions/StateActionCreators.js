@@ -2,40 +2,40 @@ import React from 'react';
 
 // get constants
 import {
-    STATES_FETCH_ERROR,
-    STATES_FETCH_INITIATED,
-    STATES_FETCH_COMPLETED    
+    REQUEST_ERROR,
+    REQUEST_INITIATED,
+    REQUEST_COMPLETED    
 } from 'js/Constants/StateConstants';
 
 import request from 'superagent';
 
-export function stateFetchInitiated() {
-    return {
-        type: STATES_FETCH_INITIATED,
-    };
-}
-
-export function stateFetchError(error) {
-    return {
-        type: STATES_FETCH_ERROR,
-        error
-    };
-}
-
-export function stateFetchCompleted(response) {
-    return {
-        type: STATES_FETCH_COMPLETED,
-        payload: response.data // Response from API
-    };
+export function RequestFinished(response, error) {
+        if error == null {
+            return {
+            type: REQUEST_COMPLETED,
+            payload: response.data // Response
+        };
+    } else {
+        return {
+            type: REQUEST_ERROR, // Error
+            error
+        };
+    }
 }
 
 export function fetchStates() { // Make request to api
     return dispatch => {
-        dispatch(stateFetchInitiated());
+        dispatch(requestInitiated());
         request.get("http://localhost:3306/states/").then((data) => {
-                dispatch(stateFetchCompleted(data.body));
+                dispatch(RequestFinished(data.body, null));
             }).catch((error) => {
-                dispatch(stateFetchError(error));
+                dispatch(RequestFinished(null, error));
             });
+    };
+}
+
+export function requestInitiated() {
+    return {
+        type: REQUEST_INITIATED,
     };
 }
