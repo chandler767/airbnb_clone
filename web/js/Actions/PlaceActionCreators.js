@@ -4,11 +4,11 @@ import {
     REQUEST_ERROR,
     REQUEST_INITIATED,
     REQUEST_COMPLETED    
-} from 'js/Constants/StateConstants';
+} from 'js/Constants/PlaceConstants';
 
 import request from 'superagent';
 
-export function fetchCityChange(response, error) {
+export function fetchPlacesChange(response, error) {
     if error == null {
         if response == null { 
             return { // If nothing was passed the the request was started.
@@ -28,5 +28,14 @@ export function fetchCityChange(response, error) {
     }    
 }
 
-export function fetchCities() { // Make request to api
+export function fetchPlaces() { // Make request to api
+    return dispatch => {
+        dispatch(fetchPlacesChange(null, null));
+        request.get("http://localhost:3306/places/").then((data) => {
+                dispatch(fetchPlacesChange(data.body, null));
+            }).catch((error) => {
+                dispatch(fetchPlacesChange(null, error));
+            });
+    };
 }
+
