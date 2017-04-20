@@ -1,5 +1,6 @@
 from app.models.amenity import Amenity
 from app.models.place_amenity import PlaceAmenities
+from app.models.place import Place
 from app import app
 import datetime
 import json
