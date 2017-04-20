@@ -4,7 +4,7 @@ import {
     REQUEST_ERROR,
     REQUEST_INITIATED,
     REQUEST_COMPLETED    
-} from 'js/Constants/StateConstants';
+} from 'js/Constants/CityConstants';
 
 import request from 'superagent';
 
