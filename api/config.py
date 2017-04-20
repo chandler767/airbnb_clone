@@ -20,7 +20,7 @@ if os.environ.get('AIRBNB_ENV') == 'production':
 	HOST = '0.0.0.0'
 	PORT = 3000
 	DATABASE = {
-		'host': '54.183.231.35',
+		'host': 'localhost',
 		'user': 'airbnb_user_prod',
 		'database': 'airbnb_prod',
 		'port': 3306,
