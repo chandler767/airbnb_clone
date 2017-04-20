@@ -1,0 +1,4 @@
+//CityConstants.js
+export const REQUEST_COMPLETED = "REQUEST_COMPLETED";
+export const REQUEST_ERROR = "REQUEST_ERROR"; 
+export const REQUEST_INITIATED = "REQUEST_INITIATED";
