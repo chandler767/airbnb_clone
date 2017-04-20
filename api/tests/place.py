@@ -65,7 +65,7 @@ class PlaceUnitTest(unittest.TestCase):
 		#Test that there are no places
 		rv = self.app.get("/places")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating a new place
 		rv = self.app.post('/places', data=place_1)
@@ -73,7 +73,7 @@ class PlaceUnitTest(unittest.TestCase):
 
 		#Test that new place is returned
 		rv = self.app.get("/places")
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 	def test_get(self):
 		#Creating place
@@ -96,7 +96,7 @@ class PlaceUnitTest(unittest.TestCase):
 		#Testing that place was created and returned
 		rv = self.app.get('/places')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)	
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)	
 
 		#Deleting place
 		rv = self.app.delete('/places/1')
@@ -105,7 +105,7 @@ class PlaceUnitTest(unittest.TestCase):
 		#Checking place was deleted
 		rv = self.app.get('/places')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Testing to see if I can delete non-existent place
 		rv = self.app.delete('/places/123')
@@ -151,15 +151,14 @@ class PlaceUnitTest(unittest.TestCase):
 		#Checking that updates happened
 		rv = self.app.get('/places/1')
 		self.assertEqual(rv.status_code, 200)
-		data = json.loads(rv.data)
-		self.assertEqual(data['name'], "New name")
-		self.assertEqual(data['description'], "New description")
-		self.assertEqual(data['number_rooms'], 3)
-		self.assertEqual(data['number_bathrooms'], 1)
-		self.assertEqual(data['max_guest'], 4)
-		self.assertEqual(data['price_by_night'], 150)
-		self.assertEqual(data['latitude'], -3.6899)
-		self.assertEqual(data['longitude'], -98.2498)
+		self.assertEqual(json.loads(rv.data)['name'], "New name")
+		self.assertEqual(json.loads(rv.data)['description'], "New description")
+		self.assertEqual(json.loads(rv.data)['number_rooms'], 3)
+		self.assertEqual(json.loads(rv.data)['number_bathrooms'], 1)
+		self.assertEqual(json.loads(rv.data)['max_guest'], 4)
+		self.assertEqual(json.loads(rv.data)['price_by_night'], 150)
+		self.assertEqual(json.loads(rv.data)['latitude'], -3.6899)
+		self.assertEqual(json.loads(rv.data)['longitude'], -98.2498)
 
 		#Testing update for invalid place
 		rv = self.app.put("/places/123", data=dict(name="New name"))
@@ -188,7 +187,7 @@ class PlaceUnitTest(unittest.TestCase):
 		#Testing that no place exists
 		rv = self.app.get("/states/1/cities/1/places")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating place
 		rv = self.app.post('/states/1/cities/1/places', data=place_1)
@@ -197,7 +196,7 @@ class PlaceUnitTest(unittest.TestCase):
 		#Testing if place was created and correctly returned
 		rv = self.app.get("/states/1/cities/1/places")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 		#Testing returning a place in invalid city
 		rv = self.app.get("/states/1/cities/123/places")

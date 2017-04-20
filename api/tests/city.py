@@ -45,7 +45,7 @@ class CityUnitTest(unittest.TestCase):
 		#Test that there are no cities
 		rv = self.app.get("/states/1/cities")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0) 
+		self.assertEqual(len(json.loads(rv.data)['data']), 0) 
 
 		#Creating city
 		rv = self.app.post("/states/1/cities", data=city_1)
@@ -54,7 +54,7 @@ class CityUnitTest(unittest.TestCase):
 		#Test that there is one city returned
 		rv = self.app.get("/states/1/cities")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)['data']), 1)
 
 	def test_get(self):
 		#Creating city
@@ -77,7 +77,7 @@ class CityUnitTest(unittest.TestCase):
 		#Testing that city was created and returned
 		rv = self.app.get('/states/1/cities')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)['data']), 1)
 
 		#Testing deletion of a city
 		rv = self.app.delete('/states/1/cities/1')
@@ -86,7 +86,7 @@ class CityUnitTest(unittest.TestCase):
 		#Testing that state was deleted
 		rv = self.app.get('/states/1/cities')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)['data']), 0)
 
 		#Test that I cant delete a fake state
 		rv = self.app.delete('/states/1/cities/123')

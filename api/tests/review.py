@@ -73,7 +73,8 @@ class ReviewUnitTest(unittest.TestCase):
 	def test_list(self):
 		#Testing that there are no reviews returned
 		rv = self.app.get("/users/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating review
 		rv = self.app.post('/users/1/reviews', data=review_1)
@@ -82,7 +83,8 @@ class ReviewUnitTest(unittest.TestCase):
 
 		#Testing that review is returned
 		rv = self.app.get("/users/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 		#Testing getting reviews for invalid user
 		rv = self.app.get("/users/123/reviews")
@@ -121,7 +123,8 @@ class ReviewUnitTest(unittest.TestCase):
 
 		#Ensuring review was created 
 		rv = self.app.get("/users/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 		#Deleting review
 		rv = self.app.delete("/users/1/1")
@@ -129,7 +132,8 @@ class ReviewUnitTest(unittest.TestCase):
 
 		#Ensuring review was deleted
 		rv = self.app.get("/users/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 	def test_place_reviews(self):
 		#Creating place
@@ -147,7 +151,7 @@ class ReviewUnitTest(unittest.TestCase):
 		#Testing that there are no reviews for the place
 		rv = self.app.get("/places/1/reviews")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating review at place
 		rv = self.app.post("/places/1/reviews", data=review_1)
@@ -156,7 +160,7 @@ class ReviewUnitTest(unittest.TestCase):
 		#Testing returning of review at place
 		rv = self.app.get("/places/1/reviews")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 	def test_create_place_reviews(self):
 		#Creating place
@@ -244,7 +248,7 @@ class ReviewUnitTest(unittest.TestCase):
 
 		#Ensuring review was created 
 		rv = self.app.get("/places/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 		#Deleting review
 		rv = self.app.delete("/places/1/1")
@@ -252,4 +256,4 @@ class ReviewUnitTest(unittest.TestCase):
 
 		#Ensuring review was deleted
 		rv = self.app.get("/places/1/reviews")
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)

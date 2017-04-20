@@ -41,14 +41,14 @@ class AmenityUnitTest(unittest.TestCase):
 		self.assertEqual(rv.status_code, 409)
 
 		#Testing creationg of amenity wiht no name field
-		rv = self.app.post("/amentities", data=dict())
+		rv = self.app.post("/amenities", data=dict())
 		self.assertEqual(rv.status_code, 400)
 
 	def test_list(self):
 		#Check that there are no amentities
 		rv = self.app.get("/amenities")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating a new amenity
 		rv = self.app.post('/amenities', data=amenity_1)
@@ -56,7 +56,7 @@ class AmenityUnitTest(unittest.TestCase):
 
 		#Test that new amenity is returned
 		rv = self.app.get("/amenities")
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 	def test_get(self):
 		#Creating amenity
@@ -88,8 +88,105 @@ class AmenityUnitTest(unittest.TestCase):
 		#Checking amenity was deleted
 		rv = self.app.get('/amenities')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Testing to see if I can delete non-existent amenity
 		rv = self.app.delete('/amenities/123')
+		self.assertEqual(rv.status_code, 404)
+
+	def test_create_place_amenity(self):
+		#Creating amenity
+		rv = self.app.post('/users', data=user_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states', data=state_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states/1/cities', data=city_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/places', data=place_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/amenities', data=amenity_1)
+		self.assertEqual(rv.status_code, 201)
+
+		#Testing creating a new amenity for a place
+		rv = self.app.post('/places/1/amenities/1')
+		self.assertEqual(rv.status_code, 201)
+
+		#Testing for 404 if place does not exist
+		rv = self.app.post('/places/404/amenities/1')
+		self.assertEqual(rv.status_code, 404)
+
+		#Testing for 404 if amenity does not exist
+		rv = self.app.post('/places/1/amenities/404')
+		self.assertEqual(rv.status_code, 404)
+
+			#Testing to see if I can create a duplicate amenity for a place
+		rv = self.app.post('/places/1/amenities/1')
+		self.assertEqual(rv.status_code, 400)
+
+	def test_get_place_amenity(self):
+		#Creating amenity
+		rv = self.app.post('/users', data=user_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states', data=state_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states/1/cities', data=city_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/places', data=place_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/amenities', data=amenity_1)
+		self.assertEqual(rv.status_code, 201)
+
+		#Testing there are no amenities for a place
+		rv = self.app.get('/places/1/amenities')
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)['data']), 0)
+
+		#Testing creation of new amenity for place
+		rv = self.app.post('/places/1/amenities/1')
+		self.assertEqual(rv.status_code, 201)
+
+		#Testing that there is one amenity for a place
+		rv = self.app.get('/places/1/amenities')
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)['data']), 1)
+
+		#Testing for 404 if the place does not exist
+		rv = self.app.get('/places/404/amentities')
+		self.assertEqual(rv.status_code, 404)
+
+	def test_delete_place_amenity(self):
+		#Creating amenity for place
+		rv = self.app.post('/users', data=user_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states', data=state_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/states/1/cities', data=city_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/places', data=place_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/amenities', data=amenity_1)
+		self.assertEqual(rv.status_code, 201)
+		rv = self.app.post('/places/1/amenities/1')
+		self.assertEqual(rv.status_code, 201)
+
+		#Ensuring there is a amenity for place
+		rv = self.app.get('/places/1/amenities')
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)['data']), 1)
+
+		#Deleting amenity
+		rv = self.app.delete('/places/1/amenities/1')
+		self.assertEqual(rv.status_code, 200)
+
+		#Ensuring place was deleted
+		rv = self.app.get('/places/1/amenities')
+		self.assertEqual(rv.status_code, 200)
+		self.assertEqual(len(json.loads(rv.data)['data']), 0)
+
+		#Testing for 404 if place does not exist
+		rv = self.app.delete('/places/404/amenities/1')
+		self.assertEqual(rv.status_code, 404)
+
+		#Testing for 404 if amenity does not exist
+		rv = self.app.delete('/places/1/amenities/404')
 		self.assertEqual(rv.status_code, 404)

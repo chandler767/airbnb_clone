@@ -38,7 +38,7 @@ class StateUnitTest(unittest.TestCase):
 		#Test that there are no states
 		rv = self.app.get("/states")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0) 
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0) 
 
 		#Creating state
 		rv = self.app.post("/states", data=state_1)
@@ -47,7 +47,7 @@ class StateUnitTest(unittest.TestCase):
 		#Test that there is one state returned
 		rv = self.app.get("/states")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 	def test_get(self):
 		#Creating state
@@ -71,7 +71,7 @@ class StateUnitTest(unittest.TestCase):
 		#Testing that state was created and returned
 		rv = self.app.get('/states')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)#
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)#
 
 		#Testing deletion of a state
 		rv = self.app.delete('/states/1')
@@ -80,7 +80,7 @@ class StateUnitTest(unittest.TestCase):
 		#Testing that state was deleted
 		rv = self.app.get('/states')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Test that I cant delete a fake state
 		rv = self.app.delete('/states/123')

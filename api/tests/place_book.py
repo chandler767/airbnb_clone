@@ -68,7 +68,7 @@ class PlaceBookUnitTest(unittest.TestCase):
 		#Test that there are no bookings
 		rv = self.app.get("/places/1/books")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Creating new booking
 		rv = self.app.post("/places/1/books", data=booking_1)
@@ -77,7 +77,7 @@ class PlaceBookUnitTest(unittest.TestCase):
 		#Testing that new booking is returned
 		rv = self.app.get("/places/1/books")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)
 
 	def test_get(self):
 		#Creating booking
@@ -104,7 +104,7 @@ class PlaceBookUnitTest(unittest.TestCase):
 		#Testing that booking was created and returned
 		rv = self.app.get('/places/1/books')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)	
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)	
 
 		#Deleting booking
 		rv = self.app.delete('/places/1/books/1')
@@ -113,7 +113,7 @@ class PlaceBookUnitTest(unittest.TestCase):
 		#Checking place was deleted
 		rv = self.app.get('/places/1/books')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Testing to see if I can delete non-existent place
 		rv = self.app.delete('/places/1/books/123')

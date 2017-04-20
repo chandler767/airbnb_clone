@@ -55,7 +55,7 @@ class UserUnitTest(unittest.TestCase):
 		#Test that no users exist
 		rv = self.app.get("/users")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0) #
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0) #
 
 		#Creating user
 		rv = self.app.post("/users", data=user_1)
@@ -64,7 +64,7 @@ class UserUnitTest(unittest.TestCase):
 		#Testing that one user is returned
 		rv = self.app.get("/users")
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)#
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)#
 
 	def test_get(self):
 		#Creating user
@@ -89,7 +89,7 @@ class UserUnitTest(unittest.TestCase):
 		#Testing that user was created and returned
 		rv = self.app.get('/users')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 1)#
+		self.assertEqual(len(json.loads(rv.data)["data"]), 1)#
 
 		#Testing deletion of a user
 		rv = self.app.delete('/users/1')
@@ -98,7 +98,7 @@ class UserUnitTest(unittest.TestCase):
 		#Testing that user was deleted
 		rv = self.app.get('/users')
 		self.assertEqual(rv.status_code, 200)
-		self.assertEqual(len(json.loads(rv.data)), 0)
+		self.assertEqual(len(json.loads(rv.data)["data"]), 0)
 
 		#Test that I cant delete a fake user
 		rv = self.app.delete('/users/123')
@@ -133,7 +133,7 @@ class UserUnitTest(unittest.TestCase):
 		#Testing that update time is correct
 		rv = self.app.get('/users/1')
 		self.assertEqual(rv.status_code, 200)
-		self.assertTrue(abs(datetime.strptime(json.loads(rv.data)['updated_at'],"%d/%m/%Y %H:%M:%S") - update_time) < timedelta(seconds=3))
+		self.assertTrue(abs(datetime.strptime(json.loads(rv.data)['updated_at'],"%Y/%m/%d %H:%M:%S") - update_time) < timedelta(seconds=3))
 
 		#Checking that updates happend
 		rv = self.app.get('/users/1')
